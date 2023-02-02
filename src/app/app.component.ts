@@ -16,22 +16,14 @@ export class AppComponent {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
       })
     ],
-    zoom: 16,
-    center: { lat: 52.099912141704806, lng: 5.064885078121194 }
+    zoom: 3,
+    center: { lat: 52.099912141, lng: 5.064885078 }
   }
 
   initMarkers() {
     const initialMarkers = [
       {
-        position: { lat: 52.099912141704806, lng: 5.064885078121194 },
-        draggable: false
-      },
-      {
-        position: { lat: 28.625293, lng: 5.064885078121194 },
-        draggable: false
-      },
-      {
-        position: { lat: 28.625182, lng: 5.064885078121194 },
+        position: { lat: 52.099912, lng: 5.064885 },
         draggable: false
       }
     ];
@@ -42,7 +34,11 @@ export class AppComponent {
       this.map.panTo(data.position);
       this.markers.push(marker)
     }
-    
+  }
+
+  drawPolyLine(latlings: number[][]){
+    const polyline = Leaflet.polyline(latlings as [number, number][], {color: 'red'});
+    polyline.addTo(this.map)
   }
 
   generateMarker(data: any, index: number) {
@@ -54,7 +50,13 @@ export class AppComponent {
   onMapReady($event: Leaflet.Map) {
     this.map = $event;
     this.initMarkers();
+
+    const latlngs = [ [52.09991, 5.06488], [37.77, -79.43], [39.04, -85.2]];
+    this.drawPolyLine(latlngs);
   }
+
+  //TODO: Add functionality to always have a marker at the last coordinate
+  // TODO: See if you can have custom marker if not marker with plane?
 
   mapClicked($event: any) {
     console.log($event.latlng.lat, $event.latlng.lng);
