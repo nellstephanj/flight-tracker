@@ -36,8 +36,8 @@ export class AppComponent {
     }
   }
 
-  drawPolyLine(latlings: number[][]){
-    const polyline = Leaflet.polyline(latlings as [number, number][], {color: 'red'});
+  drawPolyLine(latlings: number[][], color: string){
+    const polyline = Leaflet.polyline(latlings as [number, number][], {color: color});
     polyline.addTo(this.map)
   }
 
@@ -52,7 +52,10 @@ export class AppComponent {
     this.initMarkers();
 
     const latlngs = [ [52.09991, 5.06488], [37.77, -79.43], [39.04, -85.2]];
-    this.drawPolyLine(latlngs);
+    this.drawPolyLine(latlngs, "red");
+
+    const latlngs2 = [ [50.09991, 5.06488], [35.77, -79.43], [34.04, -85.2]];
+    this.drawPolyLine(latlngs2, "green");
   }
 
   //TODO: Add functionality to always have a marker at the last coordinate
