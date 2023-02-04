@@ -11,7 +11,7 @@ export class SignalRService {
 
   constructor() {
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl('https://localhost:7000/graph') // TODO: If a simple solution cannot be found create multiple hubs and allocated to people
+      .withUrl('https://localhost:7000/track') // TODO: If a simple solution cannot be found create multiple hubs and allocated to people
       .configureLogging(signalR.LogLevel.Trace)
       .build();
     this.startConnection();
@@ -32,7 +32,7 @@ export class SignalRService {
   };
 
   // addGraphValueListener = () => {
-  //   this.hubConnection.on('sendValue', (content: GraphValueContent) => {
+  //   this.hubConnection.on('sendFlightData', (content: GraphValueContent) => {
   //     console.log(content);
   //     this.onMessageReceived.emit(content);
   //   })

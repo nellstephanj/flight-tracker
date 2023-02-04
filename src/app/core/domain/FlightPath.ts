@@ -1,4 +1,4 @@
-export class GraphValueContent{
+export class FlightPath{
   airlineName: string = "defaultAirline";
-  flightpath: number[][] = [ [0, 0]];
+  flightPathCoordinates: number[][] = [ [0, 0]];
 }
