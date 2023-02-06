@@ -1,5 +1,6 @@
 import {EventEmitter, Injectable} from '@angular/core';
 import * as signalR from '@microsoft/signalr';
+import {FlightPath} from "../domain/FlightPath";
 
 @Injectable({
   providedIn: 'root'
@@ -31,10 +32,10 @@ export class SignalRService {
     }
   };
 
-  // addGraphValueListener = () => {
-  //   this.hubConnection.on('sendFlightData', (content: GraphValueContent) => {
-  //     console.log(content);
-  //     this.onMessageReceived.emit(content);
-  //   })
-  // };
+  addFlightListener = () => {
+    this.hubConnection.on('sendFlightData', (flightPath: FlightPath) => {
+      console.log(flightPath);
+      this.onMessageReceived.emit(flightPath);
+    })
+  };
 }
