@@ -1,14 +1,17 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import * as Leaflet from "leaflet";
+import {SignalRService} from "../services/signal-r.service";
+import {FlightPath} from "../domain/FlightPath";
 
 @Component({
   selector: 'app-world-map',
   templateUrl: './world-map.component.html',
   styleUrls: ['./world-map.component.scss']
 })
-export class WorldMapComponent {
+export class WorldMapComponent implements OnInit {
   map!: Leaflet.Map;
   markers: Leaflet.Marker[] = [];
+  flightList: string [] = [];
   options = {
     layers: [
       Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -17,6 +20,25 @@ export class WorldMapComponent {
     ],
     zoom: 3,
     center: { lat: 52.099912141, lng: 5.064885078 }
+  }
+
+  constructor(private signalRService: SignalRService) {
+
+  }
+
+  ngOnInit(): void {
+    this.signalRService.onMessageReceived.subscribe((flightPath: FlightPath) => {
+      console.log(flightPath);
+      const latlngs: number[][] = [[]]
+      if(flightPath.flightPathCoordinates.length > 0) {
+        latlngs.pop();
+      }
+      Object.entries(flightPath.flightPathCoordinates).forEach(([name, coordinate]) => {
+        latlngs.push([coordinate.latitude, coordinate.longitudes])
+      });
+
+      this.drawPolyLine(latlngs, flightPath.lineColour);
+    });
   }
 
   initMarkers() {
@@ -49,12 +71,6 @@ export class WorldMapComponent {
   onMapReady($event: Leaflet.Map) {
     this.map = $event;
     this.initMarkers();
-
-    const latlngs = [ [52.09991, 5.06488], [37.77, -79.43], [39.04, -85.2]];
-    this.drawPolyLine(latlngs, "red");
-
-    const latlngs2 = [ [50.09991, 5.06488], [35.77, -79.43], [34.04, -85.2]];
-    this.drawPolyLine(latlngs2, "green");
   }
 
   //TODO: Add functionality to always have a marker at the last coordinate
