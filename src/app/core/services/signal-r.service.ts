@@ -12,7 +12,7 @@ export class SignalRService {
 
   constructor() {
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl('https://localhost:7000/track') // TODO: If a simple solution cannot be found create multiple hubs and allocated to people
+      .withUrl('https://localhost:7038/track') // TODO: If a simple solution cannot be found create multiple hubs and allocated to people
       .configureLogging(signalR.LogLevel.Trace)
       .build();
     this.startConnection();

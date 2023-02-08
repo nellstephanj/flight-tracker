@@ -1,4 +1,7 @@
+import {Coordinate} from "./Coordinate";
+
 export class FlightPath{
   airlineName: string = "defaultAirline";
-  flightPathCoordinates: number[][] = [ [0, 0]];
+  flightPathCoordinates: Coordinate[] = [];
+  lineColour: string = "red"
 }
