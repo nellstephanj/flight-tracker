@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import * as Leaflet from "leaflet";
 import {SignalRService} from "../services/signal-r.service";
 import {FlightPath} from "../domain/FlightPath";
+import {Marker} from "leaflet";
 
 @Component({
   selector: 'app-world-map',
@@ -11,7 +12,7 @@ import {FlightPath} from "../domain/FlightPath";
 export class WorldMapComponent implements OnInit {
   map!: Leaflet.Map;
   markers: Leaflet.Marker[] = [];
-  flightList: string [] = [];
+  flightMarkers = new Map();
   options = {
     layers: [
       Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -19,7 +20,7 @@ export class WorldMapComponent implements OnInit {
       })
     ],
     zoom: 3,
-    center: { lat: 52.099912141, lng: 5.064885078 }
+    center: {lat: 52.099912141, lng: 5.064885078}
   }
 
   constructor(private signalRService: SignalRService) {
@@ -28,23 +29,37 @@ export class WorldMapComponent implements OnInit {
 
   ngOnInit(): void {
     this.signalRService.onMessageReceived.subscribe((flightPath: FlightPath) => {
-      console.log(flightPath);
       const latlngs: number[][] = [[]]
-      if(flightPath.flightPathCoordinates.length > 0) {
+      if (flightPath.flightPathCoordinates.length > 0) {
         latlngs.pop();
       }
-      Object.entries(flightPath.flightPathCoordinates).forEach(([name, coordinate]) => {
+      Object.entries(flightPath.flightPathCoordinates).forEach(([, coordinate]) => {
         latlngs.push([coordinate.latitude, coordinate.longitudes])
       });
 
       this.drawPolyLine(latlngs, flightPath.lineColour);
+
+      let lastCor = latlngs.pop()
+      if (lastCor) {
+        const data = [
+          {
+            position: {lat: lastCor[0], lng: lastCor[1]},
+            draggable: false
+          }
+        ];
+        const marker = this.generateMarker(data[0], this.markers.length + 1);
+        this.markers.push(marker);
+        this.removeMarker(this.flightMarkers.get(flightPath.airlineName))
+        this.flightMarkers.set(flightPath.airlineName, marker);
+        marker.addTo(this.map).bindPopup(`<b>${flightPath.airlineName}</b>`);
+      }
     });
   }
 
   initMarkers() {
     const initialMarkers = [
       {
-        position: { lat: 52.099912, lng: 5.064885 },
+        position: {lat: 52.099912, lng: 5.064885},
         draggable: false
       }
     ];
@@ -57,20 +72,27 @@ export class WorldMapComponent implements OnInit {
     }
   }
 
-  drawPolyLine(latlings: number[][], color: string){
+  drawPolyLine(latlings: number[][], color: string) {
     const polyline = Leaflet.polyline(latlings as [number, number][], {color: color});
     polyline.addTo(this.map)
   }
 
-  generateMarker(data: any, index: number) {
-    return Leaflet.marker(data.position, { draggable: data.draggable })
+  generateMarker(data: any, index: number): Marker {
+    return Leaflet.marker(data.position, {draggable: data.draggable})
       .on('click', (event) => this.markerClicked(event, index))
       .on('dragend', (event) => this.markerDragEnd(event, index));
   }
 
+  removeMarker(marker: Marker) {
+    if (marker) {
+      this.map.removeLayer(marker)
+
+    }
+  }
+
   onMapReady($event: Leaflet.Map) {
     this.map = $event;
-    this.initMarkers();
+    // this.initMarkers();
   }
 
   //TODO: Add functionality to always have a marker at the last coordinate
