@@ -23,6 +23,14 @@ export class WorldMapComponent implements OnInit {
     center: {lat: 52.099912141, lng: 5.064885078}
   }
 
+  planeIcon = Leaflet.icon({
+    iconUrl: '../../assets/plane.webp',
+
+    iconSize:     [30, 20], // size of the icon
+    iconAnchor:   [10, 10], // point of the icon which will correspond to marker's location
+    popupAnchor:  [0, 5] // point from which the popup should open relative to the iconAnchor
+  });
+
   constructor(private signalRService: SignalRService) {
 
   }
@@ -78,9 +86,11 @@ export class WorldMapComponent implements OnInit {
   }
 
   generateMarker(data: any, index: number): Marker {
-    return Leaflet.marker(data.position, {draggable: data.draggable})
+    const marker = Leaflet.marker(data.position, {draggable: data.draggable})
       .on('click', (event) => this.markerClicked(event, index))
       .on('dragend', (event) => this.markerDragEnd(event, index));
+    marker.setIcon(this.planeIcon);
+    return marker
   }
 
   removeMarker(marker: Marker) {
