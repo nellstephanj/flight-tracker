@@ -25,7 +25,6 @@ export class WorldMapComponent implements OnInit {
 
   planeIcon = Leaflet.icon({
     iconUrl: '../../assets/plane.webp',
-
     iconSize:     [30, 20], // size of the icon
     iconAnchor:   [10, 10], // point of the icon which will correspond to marker's location
     popupAnchor:  [0, 5] // point from which the popup should open relative to the iconAnchor
@@ -63,23 +62,6 @@ export class WorldMapComponent implements OnInit {
       }
     });
   }
-
-  initMarkers() {
-    const initialMarkers = [
-      {
-        position: {lat: 52.099912, lng: 5.064885},
-        draggable: false
-      }
-    ];
-    for (let index = 0; index < initialMarkers.length; index++) {
-      const data = initialMarkers[index];
-      const marker = this.generateMarker(data, index);
-      marker.addTo(this.map).bindPopup(`<b>${data.position.lat},  ${data.position.lng}</b>`);
-      this.map.panTo(data.position);
-      this.markers.push(marker)
-    }
-  }
-
   drawPolyLine(latlings: number[][], color: string) {
     const polyline = Leaflet.polyline(latlings as [number, number][], {color: color});
     polyline.addTo(this.map)
@@ -88,7 +70,6 @@ export class WorldMapComponent implements OnInit {
   generateMarker(data: any, index: number): Marker {
     const marker = Leaflet.marker(data.position, {draggable: data.draggable})
       .on('click', (event) => this.markerClicked(event, index))
-      .on('dragend', (event) => this.markerDragEnd(event, index));
     marker.setIcon(this.planeIcon);
     return marker
   }
@@ -96,27 +77,14 @@ export class WorldMapComponent implements OnInit {
   removeMarker(marker: Marker) {
     if (marker) {
       this.map.removeLayer(marker)
-
     }
   }
 
   onMapReady($event: Leaflet.Map) {
     this.map = $event;
-    // this.initMarkers();
-  }
-
-  //TODO: Add functionality to always have a marker at the last coordinate
-  // TODO: See if you can have custom marker if not marker with plane?
-
-  mapClicked($event: any) {
-    console.log($event.latlng.lat, $event.latlng.lng);
   }
 
   markerClicked($event: any, index: number) {
     console.log($event.latlng.lat, $event.latlng.lng);
-  }
-
-  markerDragEnd($event: any, index: number) {
-    console.log($event.target.getLatLng());
   }
 }
