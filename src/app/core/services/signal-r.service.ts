@@ -8,11 +8,11 @@ import {FlightPath} from "../domain/FlightPath";
 export class SignalRService {
 
   private readonly hubConnection: signalR.HubConnection;
-  onMessageReceived = new EventEmitter<any>(); // TODO: readup
+  onMessageReceived = new EventEmitter<any>();
 
   constructor() {
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl('https://localhost:7038/track') // TODO: If a simple solution cannot be found create multiple hubs and allocated to people
+      .withUrl('https://localhost:7038/track')
       .withAutomaticReconnect()
       .configureLogging(signalR.LogLevel.Trace)
       .build();
@@ -21,21 +21,11 @@ export class SignalRService {
 
   startConnection = () => {
     this.hubConnection.start()
-      .then(() => console.log(`Connection with Graph Information Hub started Hub Id ${this.hubConnection.connectionId}`))
-      .catch(err => console.log(`Error while starting connection with Graph Information Hub: ${err}`));
+      .then(() => console.log(`Connection with Flight Tracking Hub started Hub Id ${this.hubConnection.connectionId}`))
+      .catch(err => console.log(`Error while starting connection with Flight Tracking Hub: ${err}`));
   };
-
-  stopConnection = () => {
-    if (this.hubConnection) {
-      this.hubConnection.stop().then(() => {
-        console.log('Connection closed with Graph Information Hub');
-      });
-    }
-  };
-
   addFlightListener = () => {
     this.hubConnection.on('sendFlightData', (flightPath: FlightPath) => {
-      console.log(flightPath);
       this.onMessageReceived.emit(flightPath);
     })
   };

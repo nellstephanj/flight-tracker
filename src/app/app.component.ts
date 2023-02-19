@@ -1,5 +1,4 @@
-import { Component } from '@angular/core';
-import * as Leaflet from 'leaflet';
+import {Component} from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -7,6 +6,4 @@ import * as Leaflet from 'leaflet';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'flight-tracker';
-
 }

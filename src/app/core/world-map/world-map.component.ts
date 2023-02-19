@@ -12,6 +12,7 @@ import {Marker} from "leaflet";
 export class WorldMapComponent implements OnInit {
   map!: Leaflet.Map;
   markers: Leaflet.Marker[] = [];
+  iconUrl: string = '../../assets/plane.webp'
   flightMarkers = new Map();
   options = {
     layers: [
@@ -24,7 +25,7 @@ export class WorldMapComponent implements OnInit {
   }
 
   planeIcon = Leaflet.icon({
-    iconUrl: '../../assets/plane.webp',
+    iconUrl: this.iconUrl,
     iconSize:     [30, 20], // size of the icon
     iconAnchor:   [10, 10], // point of the icon which will correspond to marker's location
     popupAnchor:  [0, 5] // point from which the popup should open relative to the iconAnchor
@@ -48,20 +49,25 @@ export class WorldMapComponent implements OnInit {
 
       let lastCor = latlngs.pop()
       if (lastCor) {
-        const data = [
-          {
-            position: {lat: lastCor[0], lng: lastCor[1]},
-            draggable: false
-          }
-        ];
-        const marker = this.generateMarker(data[0], this.markers.length + 1);
-        this.markers.push(marker);
-        this.removeMarker(this.flightMarkers.get(flightPath.airlineName))
-        this.flightMarkers.set(flightPath.airlineName, marker);
-        marker.addTo(this.map).bindPopup(`<b>${flightPath.airlineName}</b>`);
+        this.setPlaneIcon(lastCor, flightPath);
       }
     });
   }
+
+  private setPlaneIcon(lastCor: number[], flightPath: FlightPath) {
+    const data = [
+      {
+        position: {lat: lastCor[0], lng: lastCor[1]},
+        draggable: false
+      }
+    ];
+    const marker = this.generateMarker(data[0], this.markers.length + 1);
+    this.markers.push(marker);
+    this.removeMarker(this.flightMarkers.get(flightPath.airlineName))
+    this.flightMarkers.set(flightPath.airlineName, marker);
+    marker.addTo(this.map).bindPopup(`<b>${flightPath.airlineName}</b>`);
+  }
+
   drawPolyLine(latlings: number[][], color: string) {
     const polyline = Leaflet.polyline(latlings as [number, number][], {color: color});
     polyline.addTo(this.map)

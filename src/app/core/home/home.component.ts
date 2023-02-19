@@ -7,17 +7,10 @@ import {SignalRService} from "../services/signal-r.service";
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent {
-  startedStreaming = false;
-
   constructor(
     public signalRService: SignalRService,
   ) {
     this.signalRService.startConnection();
     this.signalRService.addFlightListener();
-  }
-
-  startReceiving() {
-    this.signalRService.startConnection();
-    this.startedStreaming = true;
   }
 }
