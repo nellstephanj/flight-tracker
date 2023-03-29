@@ -38,14 +38,14 @@ export class WorldMapComponent implements OnInit {
   ngOnInit(): void {
     this.signalRService.onMessageReceived.subscribe((flightPath: FlightPath) => {
       const latlngs: number[][] = [[]]
-      if (flightPath.flightPathCoordinates.length > 0) {
+      if (flightPath.FlightPathCoordinates.length > 0) {
         latlngs.pop();
       }
-      Object.entries(flightPath.flightPathCoordinates).forEach(([, coordinate]) => {
-        latlngs.push([coordinate.latitude, coordinate.longitudes])
+      Object.entries(flightPath.FlightPathCoordinates).forEach(([, coordinate]) => {
+        latlngs.push([coordinate.Latitude, coordinate.Longitudes])
       });
 
-      this.drawPolyLine(latlngs, flightPath.lineColour);
+      this.drawPolyLine(latlngs, flightPath.LineColour);
 
       let lastCor = latlngs.pop()
       if (lastCor) {
@@ -63,9 +63,9 @@ export class WorldMapComponent implements OnInit {
     ];
     const marker = this.generateMarker(data[0], this.markers.length + 1);
     this.markers.push(marker);
-    this.removeMarker(this.flightMarkers.get(flightPath.airlineName))
-    this.flightMarkers.set(flightPath.airlineName, marker);
-    marker.addTo(this.map).bindPopup(`<b>${flightPath.airlineName}</b>`);
+    this.removeMarker(this.flightMarkers.get(flightPath.AirlineName))
+    this.flightMarkers.set(flightPath.AirlineName, marker);
+    marker.addTo(this.map).bindPopup(`<b>${flightPath.AirlineName}</b>`);
   }
 
   drawPolyLine(latlings: number[][], color: string) {

@@ -1,5 +1,6 @@
 import {EventEmitter, Injectable} from '@angular/core';
 import * as signalR from '@microsoft/signalr';
+import * as signalRMsgPack from '@microsoft/signalr-protocol-msgpack';
 import {FlightPath} from "../domain/FlightPath";
 
 @Injectable({
@@ -13,6 +14,7 @@ export class SignalRService {
   constructor() {
     this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl('https://localhost:7038/track')
+      .withHubProtocol(new signalRMsgPack.MessagePackHubProtocol())
       .withAutomaticReconnect()
       .configureLogging(signalR.LogLevel.Trace)
       .build();
@@ -26,7 +28,9 @@ export class SignalRService {
   };
   addFlightListener = () => {
     this.hubConnection.on('sendFlightData', (flightPath: FlightPath) => {
-      this.onMessageReceived.emit(flightPath);
+      if (flightPath) {
+        this.onMessageReceived.emit(flightPath);
+      }
     })
   };
 }
